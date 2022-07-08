@@ -1,0 +1,23 @@
+# depending on the api version, are the kind of elements we have
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: client-deployment
+spec:
+  replicas: 3
+  selector:
+    # tells kubernetes which elements are handled by this deployment (the ones that have the "web" label)
+    matchLabels:
+      component: web
+  template:
+    # tells kubernetes to set the "web" label in each element created by this deployment, to find them later using the "selector"
+    metadata:
+      labels:
+        component: web
+    spec:
+      containers:
+        # the containers that will run in this pod (a pod runs one or more closely related containers)
+        - name: client
+          image: nicolaslazzos/multiple-docker-client
+          ports:
+            - containerPort: 3000

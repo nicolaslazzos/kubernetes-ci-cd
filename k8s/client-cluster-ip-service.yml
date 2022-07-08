@@ -1,0 +1,15 @@
+# exposes a set of pods to other objects in the cluster (does not expose them to the outside world)
+apiVersion: v1
+kind: Service
+metadata:
+  name: client-cluster-ip-service
+spec:
+  type: ClusterIP
+  selector:
+    # we want the cluster ip to apply to all the "web" components
+    component: web
+  ports:
+      # port to expose in this service
+    - port: 3000
+      # port in the container to map
+      targetPort: 3000 

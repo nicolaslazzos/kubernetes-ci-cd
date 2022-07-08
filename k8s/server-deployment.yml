@@ -1,0 +1,23 @@
+# depending on the api version, are the kind of elements we have
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: server-deployment
+spec:
+  replicas: 3
+  selector:
+    # tells kubernetes which elements are handled by this deployment (the ones that have the "api" label)
+    matchLabels:
+      component: api
+  template:
+    # tells kubernetes to set the "api" label in each element created by this deployment, to find them later using the "selector"
+    metadata:
+      labels:
+        component: api
+    spec:
+      containers:
+        # the containers that will run in this pod (a pod runs one or more closely related containers)
+        - name: server
+          image: nicolaslazzos/multiple-docker-server
+          ports:
+            - containerPort: 5000

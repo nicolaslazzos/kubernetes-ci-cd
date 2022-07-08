@@ -1,0 +1,23 @@
+# depending on the api version, are the kind of elements we have
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-deployment
+spec:
+  replicas: 1
+  selector:
+    # tells kubernetes which elements are handled by this deployment (the ones that have the "postgres" label)
+    matchLabels:
+      component: postgres
+  template:
+    # tells kubernetes to set the "postgres" label in each element created by this deployment, to find them later using the "selector"
+    metadata:
+      labels:
+        component: postgres
+    spec:
+      containers:
+        # the containers that will run in this pod (a pod runs one or more closely related containers)
+        - name: postgres
+          image: postgres:latest
+          ports:
+            - containerPort: 5432
