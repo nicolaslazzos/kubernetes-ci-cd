@@ -3,7 +3,7 @@ FROM node:17-alpine as BUILD
 WORKDIR '/app'
 
 # PM2 ensures that our app is always restarted if crashes
-RUN npm install --global pm2
+RUN npm install --location=global pm2
 
 COPY package.json .
 RUN npm i
