@@ -19,3 +19,9 @@ spec:
         # the containers that will run in this pod (a pod runs one or more closely related containers)
         - name: worker
           image: nicolaslazzos/multiple-docker-worker
+          env:
+            - name: REDIS_HOST
+              # the host is the name of the service we want to connect
+              value: redis-cluster-ip-service
+            - name: REDIS_PORT
+              value: '6379'

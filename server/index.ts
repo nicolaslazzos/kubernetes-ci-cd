@@ -17,7 +17,7 @@ const bootstrap = async () => {
     host: process.env.PG_HOST,
     database: process.env.PG_DATABASE,
     password: process.env.PG_PASSWORD,
-    port: process.env.PORT
+    port: process.env.PG_PORT
   } as PoolConfig);
 
   pgClient.on("connect", (client) => client.query("CREATE TABLE IF NOT EXISTS values (number INT)").catch(console.log));

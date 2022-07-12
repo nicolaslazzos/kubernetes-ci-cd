@@ -21,3 +21,26 @@ spec:
           image: nicolaslazzos/multiple-docker-server
           ports:
             - containerPort: 5000
+          env:
+            - name: REDIS_HOST
+              # the host is the name of the service we want to connect
+              value: redis-cluster-ip-service
+            - name: REDIS_PORT
+              value: '6379'
+            - name: PG_HOST
+              # the host is the name of the service we want to connect
+              value: postgres-cluster-ip-service
+            - name: PG_PORT
+              value: '5432'
+            - name: PG_USER
+              value: postgres
+            - name: PG_DATABASE
+              value: postgres
+            # this must be set with a secret
+            # kubectl create secret generic <secret_name> --from-literal key=value
+            # kubectl create secret generic postgres-secret --from-literal PG_PASSWORD=password
+            - name: PG_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: PG_PASSWORD

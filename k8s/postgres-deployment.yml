@@ -15,9 +15,29 @@ spec:
       labels:
         component: postgres
     spec:
+      volumes:
+        # tells kubernetes to find a storage that meets the requirements specified in the volume claim
+        # it will be available to all the containers inside this pod
+        - name: postgres-storage
+          persistentVolumeClaim:
+            claimName: postgres-persistent-volume-claim
       containers:
         # the containers that will run in this pod (a pod runs one or more closely related containers)
         - name: postgres
           image: postgres:latest
           ports:
             - containerPort: 5432
+          volumeMounts:
+            - name: postgres-storage
+              # where inside the container, the volume will be accesible, it means, anything the container store inside that folder, 
+              # it will be stored and persisted in the volume so we will set the path of the folder that postgres uses to store the data
+              mountPath: /var/lib/postgresql/data
+              # the path to use inside the persistent volume to save the container data
+              subPath: postgres
+          env:
+            # overriding the postgres default password (should have this name because of the postgres docker image)
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: PG_PASSWORD
