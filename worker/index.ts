@@ -10,6 +10,7 @@ const bootstrap = async () => {
   await redisPublisher.connect();
 
   const fib = (index: number): number => {
+    if (index < 1) return 0;
     if (index < 2) return 1;
     return fib(index - 1) + fib(index - 2);
   };

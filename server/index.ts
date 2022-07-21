@@ -68,11 +68,9 @@ const bootstrap = async () => {
     try {
       const index = req.body.index;
 
-      if (parseInt(index) > 40) {
-        return res.status(422).send("Index too high");
-      }
+      if (parseInt(index) > 40) return res.status(422).send("Index too high");
 
-      redisClient.hSet("values", index, "Nothing yet!");
+      redisClient.hSet("values", index, "Calculating...");
 
       redisPublisher.publish("insert", index);
 
