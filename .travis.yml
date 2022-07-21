@@ -1,0 +1,42 @@
+language: generic
+
+sudo: required
+
+services:
+  - docker
+
+env:
+  global:
+    # save the latest commit sha to use it for tagging unique versions of docker containers
+    - SHA=$(git rev-parse HEAD)
+    - CLOUDSDK_CORE_DISABLE_PROMPTS=1
+
+before_install: 
+  # use the encrypted service-account.json file
+  - openssl aes-256-cbc -K $encrypted_9f3b5599b056_key -iv $encrypted_9f3b5599b056_iv -in service-account.json.enc -out service-account.json -d
+  # install the google cloud sdk
+  - curl https://sdk.cloud.google.com | bash > /dev/null;
+  # apply some config
+  - source $HOME/google-cloud-sdk/path.bash.inc
+  # install the kubectl cli
+  - gcloud components update kubectl
+  # authorize the google cloud sdk
+  - gcloud auth activate-service-account --key-file service-account.json
+  # select the google cloud project
+  - gcloud config set project data-air-356902
+  # select a compute zone
+  - gcloud config set compute/zone us-central1-a
+  # select the cluster we'll be working on
+  - gcloud container clusters get-credentials multi-cluster
+
+  # login to docker
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # build the docker image for the client tests
+  - docker build -t nicolaslazzos/client-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true nicolaslazzos/client-test npm run test:ci
+
+deploy:
+  provider: script
+  script: bash ./deploy.sh
