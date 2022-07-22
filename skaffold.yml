@@ -1,0 +1,48 @@
+apiVersion: skaffold/v2beta17
+kind: Config
+build:
+  local:
+    # for local development, dont push the images to docker hub
+    push: false
+  artifacts:
+    - image: nicolaslazzos/multiple-docker-client
+      context: client
+      docker:
+        dockerfile: Dockerfile.dev
+      sync:
+        # specify what files to sync when a change occurs
+        manual:
+          - src: "pages/**/*.tsx"
+            dest: .
+          - src: "pages/**/*.ts"
+            dest: .
+          - src: "pages/**/*.jsx"
+            dest: .
+          - src: "pages/**/*.js"
+            dest: .
+          - src: "styles/**/*.css"
+            dest: .
+    - image: nicolaslazzos/multiple-docker-server
+      context: server
+      docker:
+        dockerfile: Dockerfile.dev
+      sync:
+        manual:
+          - src: "*.ts"
+            dest: .
+          - src: "*.js"
+            dest: .
+    - image: nicolaslazzos/multiple-docker-worker
+      context: worker
+      docker:
+        dockerfile: Dockerfile.dev
+      sync:
+        manual:
+          - src: "*.ts"
+            dest: .
+          - src: "*.js"
+            dest: .
+deploy:
+  kubectl:
+    manifests:
+      - ./k8s/*
