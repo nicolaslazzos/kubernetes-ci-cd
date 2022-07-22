@@ -41,6 +41,8 @@ const Home: NextPage = () => {
     try {
       event.preventDefault();
 
+      if (!number) return alert('You must enter a number!');
+
       await axios.post('/api/values', { index: number });
 
       setNumber('');
@@ -62,6 +64,8 @@ const Home: NextPage = () => {
           <Tbody>
             {
               Object.keys(values).map((value) => {
+                if (!value) return null;
+                
                 return (
                   <Tr key={value}>
                     <Td>{value}</Td>
